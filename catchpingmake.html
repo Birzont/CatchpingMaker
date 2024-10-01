@@ -158,80 +158,60 @@
 
 
 
-
+        let selectedHairImageSrc = 'euhair1.png';  // 초기값으로 euhair1 사용, 변경 가능
+        let selectedHairColor = '#FF0000';  // 기본 머리 색상
         
-        //let selectedHairColor = '#000000';  // 기본 머리 색상 (검정)
+        hairColorInput.addEventListener('input', (e) => {
+            selectedHairColor = e.target.value;
+            drawAvatar();  // 머리 색상이 변경되면 실시간으로 다시 그리기
+        });
+        
+        // 머리카락 이미지에 색상 적용
+        async function drawHairWithColor(imageSrc, color) {
+            const hairImage = await loadImage(imageSrc);
+        
+            // 캔버스에 머리 이미지를 먼저 그립니다
+            ctx.drawImage(hairImage, 0, 0, 400, 400);
+        
+            // #FFFFFF(흰색) 부분만 사용자가 선택한 색상으로 변경합니다
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+        
+            for (let i = 0; i < data.length; i += 4) {
+                // 흰색 픽셀 탐색 (RGB 값이 모두 255인 경우)
+                if (data[i] === 255 && data[i + 1] === 255 && data[i + 2] === 255) {
+                    // 머리 색상을 적용 (선택된 색상으로 대체)
+                    const colorObj = hexToRgb(color);
+                    data[i] = colorObj.r;     // R
+                    data[i + 1] = colorObj.g; // G
+                    data[i + 2] = colorObj.b; // B
+                }
+            }
+        
+            // 변경된 이미지 데이터를 다시 캔버스에 반영합니다
+            ctx.putImageData(imageData, 0, 0);
+        }
+        
+        // HEX 색상을 RGB로 변환하는 함수
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            return {
+                r: (bigint >> 16) & 255,
+                g: (bigint >> 8) & 255,
+                b: bigint & 255
+            };
+        }
+        
+        // 아바타 전체를 그리는 함수
         async function drawAvatar() {
-            // Clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-            // Draw the body background color
-            ctx.fillStyle = selectedBodyColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-            // Load and draw the body image (투명한 PNG 이미지)
             const bodyImage = await loadImage(bodyImageSrc);
             ctx.drawImage(bodyImage, 0, 0, 400, 400);
         
-            // Load and draw the selected hair type if any
-            if (selectedHairImage) {
-                const hairImage = await loadImage(selectedHairImage);
-        
-                // Draw the original hair image
-                ctx.drawImage(hairImage, 0, 0, 400, 400);
-        
-                // Replace #FFFFFF (white) in the hair image with the selected hair color
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
-        
-                // Iterate over every pixel in the image
-                for (let i = 0; i < data.length; i += 4) {
-                    const r = data[i];     // Red
-                    const g = data[i + 1]; // Green
-                    const b = data[i + 2]; // Blue
-                    const a = data[i + 3]; // Alpha (opacity)
-        
-                    // If the pixel is white (#FFFFFF) and fully opaque, replace it with the selected color
-                    if (r === 255 && g === 255 && b === 255 && a === 255) {
-                        const selectedColor = hexToRgb(selectedHairColor);
-                        data[i] = selectedColor.r;     // Red
-                        data[i + 1] = selectedColor.g; // Green
-                        data[i + 2] = selectedColor.b; // Blue
-                    }
-                }
-        
-                // Put the modified image data back on the canvas
-                ctx.putImageData(imageData, 0, 0);
-            }
-        
-            // Load and draw the selected head accessory if any
-            if (selectedHeadAccessoryImage) {
-                const headAccessoryImage = await loadImage(selectedHeadAccessoryImage);
-                ctx.drawImage(headAccessoryImage, 50, 10, 100, 100); // Adjust position based on the accessory
-            }
-        
-            // Load and draw the selected hand item if any
-            if (selectedHandItemImage) {
-                const handItemImage = await loadImage(selectedHandItemImage);
-                ctx.drawImage(handItemImage, 50, 300, 100, 100); // Adjust position based on the item
-            }
+            // 선택된 머리 스타일과 색상으로 머리 그리기
+            await drawHairWithColor(selectedHairImageSrc, selectedHairColor);
         }
         
-        
-
-
-        function hexToRgb(hex) {
-            // Remove the hash at the start if it's there
-            hex = hex.replace(/^#/, '');
-        
-            // Parse the r, g, b values
-            let bigint = parseInt(hex, 16);
-            let r = (bigint >> 16) & 255;
-            let g = (bigint >> 8) & 255;
-            let b = bigint & 255;
-        
-            return { r, g, b };
-        }
         
 
 

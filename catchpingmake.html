@@ -163,11 +163,21 @@
             const bodyImage = await loadImage(bodyImageSrc);
             ctx.drawImage(bodyImage, 0, 0, 400, 400);
 
-            // Load and draw the selected hair type if any
-            if (selectedHairImage) {
-                const hairImage = await loadImage(selectedHairImage);
-                ctx.drawImage(hairImage, 50, 30, 200, 200); // Adjust position based on the hair image
-            }
+// Load and draw the selected hair type if any
+if (selectedHairImage) {
+    const hairImage = await loadImage(selectedHairImage);
+
+    // 캔버스 크기를 가져옴
+    const canvasSize = canvas.width; // 정사각형이므로 width와 height가 같음
+    const hairSize = 200; // 원하는 머리 이미지 크기 (원하는 크기로 조정 가능)
+    
+    // 머리 이미지를 중앙에 위치시킴
+    const xPosition = (canvasSize - hairSize) / 2; // 중앙에 맞추기 위해 x 좌표 계산
+    const yPosition = (canvasSize - hairSize) / 2 - 20; // 조금 위로 올리기 위해 y 좌표 조정
+
+    ctx.drawImage(hairImage, xPosition, yPosition, hairSize, hairSize);
+}
+
 
             // Load and draw the selected head accessory if any
             if (selectedHeadAccessoryImage) {

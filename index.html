@@ -6,7 +6,8 @@
     <title>캐치핑 커스터마이징</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -14,55 +15,110 @@
             height: 100vh;
             margin: 0;
         }
+        
         canvas {
-            border: 1px solid #000;
-            background-color: white;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
+        
         #customizationPanel {
             display: flex;
             flex-direction: column;
-            margin-top: 10px;
-            width: 300px;
+            margin-top: 20px;
+            padding: 20px;
+            width: 350px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        
         .tab-buttons {
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 10px;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
+        
         .tab-button {
             cursor: pointer;
-            padding: 10px 20px;
-            background-color: #f1f1f1;
+            padding: 10px 15px;
+            background-color: #e9e9ef;
+            width: 100px;
             border: none;
             border-radius: 5px;
-            transition: background-color 0.3s;
+            font-weight: bold;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
         }
-        .tab-button:hover, .tab-button.active {
-            background-color: #ddd;
+        
+        .tab-button:hover,
+        .tab-button.active {
+            background-color: #333;
+            color: #fff;
         }
+        
         .tab-content {
             display: none;
         }
+        
         .tab-content.active {
             display: block;
         }
-        .color-button, .item-button {
+        
+        .color-button,
+        .item-button {
             width: 40px;
             height: 40px;
-            border: none;
             margin: 5px;
             cursor: pointer;
-        }
-        .color-button {
             border-radius: 50%;
+            border: 2px solid transparent;
+            transition: transform 0.3s;
         }
+        
+        .color-button:hover,
+        .item-button:hover {
+            transform: scale(1.1);
+        }
+        
         .item-button img {
             width: 100%;
             height: 100%;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            transition: border 0.3s;
         }
-        .color-input {
-            margin: 5px;
+        
+        .item-button:hover img {
+            border-color: #333;
         }
+        
+        #saveAvatar {
+            margin-top: 15px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #saveAvatar:hover {
+            background-color: #555;
+        }
+        
+        input[type="color"] {
+            width: 50px;
+            height: 50px;
+            border: none;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        
     </style>
 </head>
 <body>

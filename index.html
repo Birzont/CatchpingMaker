@@ -349,208 +349,291 @@
         let dragOffsetX = 0, dragOffsetY = 0;
         
         let selectedItems = []; // 사용자가 추가한 아이템들을 저장할 배열
+
+        
+
         
         // 이미지 업로드 처리
-        document.getElementById('uploadImage').addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = function() {
-                        uploadedImage = img;
-                        drawAvatar();
-                    };
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        // 캔버스에서 이미지 드래그 및 크기 조절 이벤트
-        canvas.addEventListener('mousedown', (e) => {
-            const mouseX = e.offsetX;
-            const mouseY = e.offsetY;
-        
-            // 추가된 아이템 중 클릭된 아이템 찾기
-            selectedItems.forEach(item => {
-                if (mouseX > item.x && mouseX < item.x + item.width && mouseY > item.y && mouseY < item.y + item.height) {
-                    item.isDragging = true;
-                    item.dragOffsetX = mouseX - item.x;
-                    item.dragOffsetY = mouseY - item.y;
-                }
-                if (mouseX > item.x + item.width - 10 && mouseY > item.y + item.height - 10) {
-                    item.resizing = true;
-                }
-            });
-        });
-        
-        canvas.addEventListener('mousemove', (e) => {
-            selectedItems.forEach(item => {
-                if (item.isDragging) {
-                    item.x = e.offsetX - item.dragOffsetX;
-                    item.y = e.offsetY - item.dragOffsetY;
-                    drawAvatar();
-                }
-        
-                if (item.resizing) {
-                    item.width = e.offsetX - item.x;
-                    item.height = e.offsetY - item.y;
-                    drawAvatar();
-                }
-            });
-        });
-        
-        canvas.addEventListener('mouseup', () => {
-            selectedItems.forEach(item => {
-                item.isDragging = false;
-                item.resizing = false;
-            });
-        });
-        
-        // 업로드된 이미지 및 아이템 그리기 함수
-        async function drawAvatar() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);  // 캔버스 초기화
-        
-            // 기본 몸통 이미지 그리기
-            const bodyImg = await loadImage(selectedBodyImage);
-            ctx.fillStyle = bodyColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height); // 배경 색상
-            ctx.drawImage(bodyImg, 0, 0, canvas.width, canvas.height);
-        
-            if (selectedHairImage) {
-                const hairImg = await loadImage(selectedHairImage);
-                ctx.drawImage(hairImg, 0, 0, canvas.width, canvas.height);
-            }
-        
-            if (selectedHeadAccessoryImage) {
-                const headAccessoryImg = await loadImage(selectedHeadAccessoryImage);
-                ctx.drawImage(headAccessoryImg, 0, 0, canvas.width, canvas.height);
-            }
-        
-            // 손 아이템 그리기
-            selectedItems.forEach(async item => {
-                const img = await loadImage(item.src);
-                ctx.drawImage(img, item.x, item.y, item.width, item.height);
-        
-                // 드래그 및 크기 조정 핸들
-                ctx.setLineDash([6]);
-                ctx.strokeStyle = 'black';
-                ctx.strokeRect(item.x, item.y, item.width, item.height);
-        
-                const handleSize = 10;
-                ctx.fillStyle = 'blue';
-                ctx.fillRect(item.x + item.width - handleSize / 2, item.y + item.height - handleSize / 2, handleSize, handleSize);
-            });
-        
-            // 업로드된 이미지 그리기
-            if (uploadedImage) {
-                ctx.drawImage(uploadedImage, imageX, imageY, imageWidth, imageHeight);
-        
-                // 가장자리에 점선 그리기
-                ctx.setLineDash([6]);  // 점선 설정
-                ctx.strokeStyle = 'black';
-                ctx.strokeRect(imageX, imageY, imageWidth, imageHeight);
-        
-                // 크기 조절 핸들 그리기
-                const handleSize = 10;
-                ctx.fillStyle = 'blue';
-                ctx.fillRect(imageX + imageWidth - handleSize / 2, imageY + imageHeight - handleSize / 2, handleSize, handleSize);
-            }
-        }
-        
-        // 아이템 추가 함수
-        function addItemToCanvas(itemSrc) {
-            const newItem = {
-                src: itemSrc,
-                x: 50,
-                y: 50,
-                width: 100,
-                height: 100,
-                isDragging: false,
-                resizing: false,
-                dragOffsetX: 0,
-                dragOffsetY: 0,
+document.getElementById('uploadImage').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                uploadedImage = img;
+                drawAvatar();
             };
-            selectedItems.push(newItem);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// 캔버스에서 이미지 및 아이템 드래그 및 크기 조절 이벤트
+canvas.addEventListener('mousedown', (e) => {
+    const mouseX = e.offsetX;
+    const mouseY = e.offsetY;
+
+    // 사용자 지정 이미지가 클릭되었는지 확인
+    if (uploadedImage && mouseX > imageX && mouseX < imageX + imageWidth && mouseY > imageY && mouseY < imageY + imageHeight) {
+        isDraggingImage = true;
+        dragOffsetX = mouseX - imageX;
+        dragOffsetY = mouseY - imageY;
+    }
+
+    // 사용자 지정 이미지 크기 조정 핸들 클릭 확인 (오른쪽 아래 10x10 영역)
+    if (uploadedImage && mouseX > imageX + imageWidth - 10 && mouseY > imageY + imageHeight - 10) {
+        resizingImage = true;
+    }
+
+    // 추가된 아이템 중 클릭된 아이템 찾기
+    selectedItems.forEach(item => {
+        if (mouseX > item.x && mouseX < item.x + item.width && mouseY > item.y && mouseY < item.y + item.height) {
+            item.isDragging = true;
+            item.dragOffsetX = mouseX - item.x;
+            item.dragOffsetY = mouseY - item.y;
+        }
+        if (mouseX > item.x + item.width - 10 && mouseY > item.y + item.height - 10) {
+            item.resizing = true;
+        }
+    });
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (isDraggingImage) {
+        imageX = e.offsetX - dragOffsetX;
+        imageY = e.offsetY - dragOffsetY;
+        drawAvatar();
+    }
+
+    if (resizingImage) {
+        imageWidth = e.offsetX - imageX;
+        imageHeight = e.offsetY - imageY;
+        drawAvatar();
+    }
+
+    selectedItems.forEach(item => {
+        if (item.isDragging) {
+            item.x = e.offsetX - item.dragOffsetX;
+            item.y = e.offsetY - item.dragOffsetY;
             drawAvatar();
         }
-        
-        // 이미지를 로드하는 함수
-        function loadImage(src) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(img);
-                img.src = src;
-            });
-        }
-        
-        bodyColorButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                bodyColor = button.getAttribute('data-color');
-                drawAvatar();
-            });
-        });
-        
-        customColorInput.addEventListener('input', () => {
-            bodyColor = customColorInput.value;
+
+        if (item.resizing) {
+            item.width = e.offsetX - item.x;
+            item.height = e.offsetY - item.y;
             drawAvatar();
+        }
+    });
+});
+
+canvas.addEventListener('mouseup', () => {
+    isDraggingImage = false;
+    resizingImage = false;
+    selectedItems.forEach(item => {
+        item.isDragging = false;
+        item.resizing = false;
+    });
+});
+        
+
+// 업로드된 이미지 및 아이템 그리기 함수
+async function drawAvatar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);  // 캔버스 초기화
+
+    // 기본 몸통 이미지 그리기
+    const bodyImg = await loadImage(selectedBodyImage);
+    ctx.fillStyle = bodyColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height); // 배경 색상
+    ctx.drawImage(bodyImg, 0, 0, canvas.width, canvas.height);
+
+    if (selectedHairImage) {
+        const hairImg = await loadImage(selectedHairImage);
+        ctx.drawImage(hairImg, 0, 0, canvas.width, canvas.height);
+    }
+
+    if (selectedHeadAccessoryImage) {
+        const headAccessoryImg = await loadImage(selectedHeadAccessoryImage);
+        ctx.drawImage(headAccessoryImg, 0, 0, canvas.width, canvas.height);
+    }
+
+    // 손 아이템 그리기
+    selectedItems.forEach(async item => {
+        const img = await loadImage(item.src);
+        ctx.drawImage(img, item.x, item.y, item.width, item.height);
+
+        // 드래그 및 크기 조정 핸들
+        ctx.setLineDash([6]);
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(item.x, item.y, item.width, item.height);
+
+        const handleSize = 10;
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(item.x + item.width - handleSize / 2, item.y + item.height - handleSize / 2, handleSize, handleSize);
+    });
+
+    // 업로드된 이미지 그리기
+    if (uploadedImage) {
+        ctx.drawImage(uploadedImage, imageX, imageY, imageWidth, imageHeight);
+
+        // 가장자리에 점선 그리기
+        ctx.setLineDash([6]);  // 점선 설정
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(imageX, imageY, imageWidth, imageHeight);
+
+        // 네 모서리에 작은 사각형(핸들) 그리기
+        const handleSize = 10;
+        ctx.fillStyle = 'blue';
+
+        // 왼쪽 위
+        ctx.fillRect(imageX - handleSize / 2, imageY - handleSize / 2, handleSize, handleSize);
+
+        // 오른쪽 위
+        ctx.fillRect(imageX + imageWidth - handleSize / 2, imageY - handleSize / 2, handleSize, handleSize);
+
+        // 왼쪽 아래
+        ctx.fillRect(imageX - handleSize / 2, imageY + imageHeight - handleSize / 2, handleSize, handleSize);
+
+        // 오른쪽 아래 (크기 조절 핸들)
+        ctx.fillRect(imageX + imageWidth - handleSize / 2, imageY + imageHeight - handleSize / 2, handleSize, handleSize);
+    }
+}
+
+// 아이템 추가 함수
+function addItemToCanvas(itemSrc) {
+    const newItem = {
+        src: itemSrc,
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 100,
+        isDragging: false,
+        resizing: false,
+        dragOffsetX: 0,
+        dragOffsetY: 0,
+    };
+    selectedItems.push(newItem);
+    drawAvatar();
+}
+
+// 이미지를 로드하는 함수
+function loadImage(src) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = src;
+    });
+}
+
+// 본체 색상 변경 이벤트
+bodyColorButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        bodyColor = button.getAttribute('data-color');
+        drawAvatar();
+    });
+});
+
+// 커스텀 색상 입력 이벤트
+customColorInput.addEventListener('input', () => {
+    bodyColor = customColorInput.value;
+    drawAvatar();
+});
+
+// 몸체 버튼 클릭 이벤트
+bodyButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        selectedBodyImage = button.getAttribute('data-image');
+        drawAvatar();
+    });
+});
+
+// 머리 버튼 클릭 이벤트
+hairButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        selectedHairImage = button.getAttribute('data-image');
+        drawAvatar();
+    });
+});
+
+// 머리 액세서리 버튼 클릭 이벤트
+headAccessoryButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        selectedHeadAccessoryImage = button.getAttribute('data-image');
+        drawAvatar();
+    });
+});
+
+// 손 아이템 버튼 클릭 이벤트
+handItemButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const handItemSrc = button.getAttribute('data-image');
+        addItemToCanvas(handItemSrc);
+    });
+});
+
+// 아바타 저장
+saveButton.addEventListener('click', async () => {
+    // 저장할 때 점선이 표시되지 않도록 하기 위해 기존 점선 그리기 제거
+    const originalDrawAvatar = drawAvatar; // 원래의 drawAvatar 함수 백업
+    drawAvatar = async () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스 초기화
+
+        // 기본 몸통 이미지 그리기
+        const bodyImg = await loadImage(selectedBodyImage);
+        ctx.fillStyle = bodyColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height); // 배경 색상
+        ctx.drawImage(bodyImg, 0, 0, canvas.width, canvas.height);
+
+        if (selectedHairImage) {
+            const hairImg = await loadImage(selectedHairImage);
+            ctx.drawImage(hairImg, 0, 0, canvas.width, canvas.height);
+        }
+
+        if (selectedHeadAccessoryImage) {
+            const headAccessoryImg = await loadImage(selectedHeadAccessoryImage);
+            ctx.drawImage(headAccessoryImg, 0, 0, canvas.width, canvas.height);
+        }
+
+        // 손 아이템 그리기
+        for (const item of selectedItems) {
+            const img = await loadImage(item.src);
+            ctx.drawImage(img, item.x, item.y, item.width, item.height);
+        }
+
+        // 업로드된 이미지 그리기
+        if (uploadedImage) {
+            ctx.drawImage(uploadedImage, imageX, imageY, imageWidth, imageHeight);
+        }
+    };
+
+    await drawAvatar(); // 최종 아바타 그리기
+    const link = document.createElement('a');
+    link.download = 'custom_avatar.png';
+    link.href = canvas.toDataURL();
+    link.click();
+
+    drawAvatar = originalDrawAvatar; // 원래의 drawAvatar 함수로 복원
+});
+
+// 탭 기능
+tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const targetTab = button.getAttribute('data-tab');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        tabContents.forEach(tab => {
+            if (tab.id === targetTab) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
         });
-        
-        bodyButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                selectedBodyImage = button.getAttribute('data-image');
-                drawAvatar();
-            });
-        });
-        
-        hairButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                selectedHairImage = button.getAttribute('data-image');
-                drawAvatar();
-            });
-        });
-        
-        headAccessoryButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                selectedHeadAccessoryImage = button.getAttribute('data-image');
-                drawAvatar();
-            });
-        });
-        
-        handItemButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const handItemSrc = button.getAttribute('data-image');
-                addItemToCanvas(handItemSrc);
-            });
-        });
-        
-        // 아바타 저장
-        saveButton.addEventListener('click', async () => {
-            const link = document.createElement('a');
-            link.download = 'custom_avatar.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-        
-        // 탭 기능
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const targetTab = button.getAttribute('data-tab');
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                tabContents.forEach(tab => {
-                    if (tab.id === targetTab) {
-                        tab.classList.add('active');
-                    } else {
-                        tab.classList.remove('active');
-                    }
-                });
-            });
-        });
-        
-        drawAvatar(); // 초기 아바타 그리기
-        
+    });
+});
+
+// 초기 아바타 그리기
+drawAvatar();
     </script>
     
     

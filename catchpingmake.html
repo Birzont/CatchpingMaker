@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>캐치핑 커스터마이징</title>
+    <title>만들어쓰는 나만핑</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -14,72 +15,152 @@
             height: 100vh;
             margin: 0;
         }
+        
         canvas {
-            border: 1px solid #000;
-            background-color: white;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
+        
         #customizationPanel {
             display: flex;
             flex-direction: column;
             margin-top: 10px;
-            width: 300px;
+            padding: 10px;
+            width: 400px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        
         .tab-buttons {
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 10px;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
+        
         .tab-button {
             cursor: pointer;
-            padding: 10px 20px;
-            background-color: #f1f1f1;
+            padding: 10px 15px;
+            background-color: #e9e9ef;
+            width: 100px;
             border: none;
             border-radius: 5px;
-            transition: background-color 0.3s;
+            font-weight: bold;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
         }
-        .tab-button:hover, .tab-button.active {
-            background-color: #ddd;
+        
+        .tab-button:hover,
+        .tab-button.active {
+            background-color: #333;
+            color: #fff;
         }
+        
         .tab-content {
             display: none;
         }
+        
         .tab-content.active {
             display: block;
         }
-        .color-button, .item-button {
+        
+        .color-button,
+        .item-button {
             width: 40px;
             height: 40px;
-            border: none;
             margin: 5px;
             cursor: pointer;
+            border-radius: 20%;
+            border: 0px solid transparent;
+            transition: transform 0.3s;
         }
-        .color-button {
-            border-radius: 50%;
+        
+        .color-button:hover,
+        .item-button:hover {
+            transform: scale(1.1);
         }
+        
         .item-button img {
             width: 100%;
             height: 100%;
+            border-radius: 20%;
+            border: 0px solid #ccc;
+            transition: border 0.3s;
         }
-        .color-input {
-            margin: 5px;
+        
+        .item-button:hover img {
+            border-color: #333;
         }
+        
+        #saveAvatar {
+            margin-top: 15px;
+            padding: 12px 30px;
+            width: 280px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #saveAvatar:hover {
+            background-color: #555;
+        }
+        
+
+
+        #shareAvatar {
+            margin-top: 15px;
+            padding: 12px 30px;
+            width: 280px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #shareAvatar:hover {
+            background-color: #555;
+        }
+
+
+        input[type="color"] {
+            width: 50px;
+            height: 50px;
+            border: none;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        
     </style>
 </head>
 <body>
 
-
-    <h2>캐치핑 커스터마이징</h2>
-    <canvas id="avatarCanvas" width="400" height="400"></canvas>
+    <br>
+    <br>
+    <h2 style="color: #ff7300; font-size:30px">만들어쓰는 나만핑!</h2>
+    <canvas id="avatarCanvas" width="420" height="420"></canvas>
 
     <!-- Customization Panel -->
     <div id="customizationPanel">
 
         <!-- 탭 버튼 -->
         <div class="tab-buttons">
-            <button class="tab-button" data-tab="bodyColorsTab">몸통 색상</button>
-            <button class="tab-button" data-tab="hairTab">머리</button>
-            <button class="tab-button" data-tab="headAccessoryTab">머리장식</button>
-            <button class="tab-button" data-tab="handItemTab">손 아이템</button>
+            <button class="tab-button" data-tab="bodyTab">몸통</button>
+            <button class="tab-button" data-tab="bodyColorsTab">색상</button>
+            <button class="tab-button" data-tab="hairTab">모자</button>
+            <button class="tab-button" data-tab="headAccessoryTab">옷</button>
+            <button class="tab-button" data-tab="handItemTab">아이템</button> 
+            <button class="tab-button" data-tab="customImageTab">사진</button> 
         </div>
 
         <!-- 몸통 색상 탭 -->
@@ -96,38 +177,155 @@
             <input class="color-input" type="color" value="#FFFFFF" id="customColor">
         </div>
 
-        <!-- 머리 탭 -->
-        <div class="tab-content" id="hairTab">
-            <!-- 유럽 스타일 머리 -->
-            <p>유럽 스타일 머리</p>
-            <button class="item-button" data-image="euhair1.png"><img src="euhair1.png" alt="유럽머리1"></button>
-            <button class="item-button" data-image="euhair2.png"><img src="euhair2.png" alt="유럽머리2"></button>
-            <!-- 중략 -->
-            <!-- 다른 스타일 머리 그룹도 동일하게 추가 -->
+
+
+        <!-- 몸통 탭 -->
+        <div class="tab-content" id="bodyTab">
+            <div style="text-align: center; font-weight: bold; font-size: 22px;">
+                <a style="color: #000000;">나의핑이 될 몸통을 선택해주세요!</a>
+            </div>
+            <button class="item-button" data-image="momtong/몸통1.png"><img src="momtong/몸통1.png" alt="몸통1"></button>
+            <button class="item-button" data-image="momtong/몸통2.png"><img src="momtong/몸통2.png" alt="몸통2"></button>
+            <button class="item-button" data-image="momtong/몸통0.png"><img src="momtong/몸통0.png" alt="몸통0"></button>
+            <button class="item-button" data-image="momtong/몸통3.png"><img src="momtong/몸통3.png" alt="몸통3"></button>
+            <button class="item-button" data-image="momtong/몸통4.png"><img src="momtong/몸통4.png" alt="몸통4"></button>
+            <button class="item-button" data-image="momtong/몸통5.png"><img src="momtong/몸통5.png" alt="몸통5"></button>
+            <button class="item-button" data-image="momtong/몸통6.png"><img src="momtong/몸통6.png" alt="몸통6"></button>
+            <button class="item-button" data-image="momtong/몸통7.png"><img src="momtong/몸통7.png" alt="몸통7"></button>
+            <button class="item-button" data-image="momtong/몸통8.png"><img src="momtong/몸통8.png" alt="몸통8"></button>
+            <button class="item-button" data-image="momtong/몸통9.png"><img src="momtong/몸통9.png" alt="몸통9"></button>
+            <button class="item-button" data-image="momtong/몸통10.png"><img src="momtong/몸통10.png" alt="몸통10"></button>
+            <button class="item-button" data-image="momtong/몸통11.png"><img src="momtong/몸통11.png" alt="몸통11"></button>
+            <button class="item-button" data-image="momtong/몸통12.png"><img src="momtong/몸통12.png" alt="몸통12"></button>
+            <button class="item-button" data-image="momtong/몸통13.png"><img src="momtong/몸통13.png" alt="몸통13"></button>
+
         </div>
 
-        <!-- 머리장식 탭 -->
-        <div class="tab-content" id="headAccessoryTab">
-            <button class="item-button" data-image="안경.png"><img src="안경.png" alt="안경"></button>
-            <button class="item-button" data-image="영국모자.png"><img src="영국모자.png" alt="영국모자"></button>
-            <!-- 나머지 머리장식 추가 -->
+        <!-- hats/모자 탭 -->
+        <div class="tab-content" id="hairTab">
+            <div style="text-align: center; font-weight: bold; font-size: 22px;">
+                <a style="color: #000000;">나의 핑이 될 모자를 선택해 주세요!</a>
+            </div>
+            <button class="item-button" data-image="hats/모자1.png"><img src="hats/모자1.png" alt="hats/모자1"></button>
+            <button class="item-button" data-image="hats/모자2.png"><img src="hats/모자2.png" alt="hats/모자2"></button>
+            <button class="item-button" data-image="hats/모자1.png"><img src="hats/모자1.png" alt="hats/모자1"></button>
+<button class="item-button" data-image="hats/모자2.png"><img src="hats/모자2.png" alt="hats/모자2"></button>
+<button class="item-button" data-image="hats/모자3.png"><img src="hats/모자3.png" alt="hats/모자3"></button>
+<button class="item-button" data-image="hats/모자4.png"><img src="hats/모자4.png" alt="hats/모자4"></button>
+<button class="item-button" data-image="hats/모자5.png"><img src="hats/모자5.png" alt="hats/모자5"></button>
+<button class="item-button" data-image="hats/모자6.png"><img src="hats/모자6.png" alt="hats/모자6"></button>
+<button class="item-button" data-image="hats/모자7.png"><img src="hats/모자7.png" alt="hats/모자7"></button>
+<button class="item-button" data-image="hats/모자8.png"><img src="hats/모자8.png" alt="hats/모자8"></button>
+<button class="item-button" data-image="hats/모자9.png"><img src="hats/모자9.png" alt="hats/모자9"></button>
+<button class="item-button" data-image="hats/모자10.png"><img src="hats/모자10.png" alt="hats/모자10"></button>
+<button class="item-button" data-image="hats/모자11.png"><img src="hats/모자11.png" alt="hats/모자11"></button>
+<button class="item-button" data-image="hats/모자12.png"><img src="hats/모자12.png" alt="hats/모자12"></button>
+<button class="item-button" data-image="hats/모자13.png"><img src="hats/모자13.png" alt="hats/모자13"></button>
+<button class="item-button" data-image="hats/모자14.png"><img src="hats/모자14.png" alt="hats/모자14"></button>
+<button class="item-button" data-image="hats/모자15.png"><img src="hats/모자15.png" alt="hats/모자15"></button>
+
+
+
+    
+            <!-- 중략 -->
+            <!-- 다른 스타일 hats/모자 그룹도 동일하게 추가 -->
         </div>
+
+        <!-- hats/모자장식 탭 -->
+        <div class="tab-content" id="headAccessoryTab">
+            <div style="text-align: center; font-weight: bold; font-size: 22px;">
+                <a style="color: #000000;">나만핑의 옷 장식을 선택해주세요.</a>
+            </div>
+
+
+            <button class="item-button" data-image="clothes/옷1.png"><img src="clothes/옷1.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷2.png"><img src="clothes/옷2.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷3.png"><img src="clothes/옷3.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷4.png"><img src="clothes/옷4.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷5.png"><img src="clothes/옷5.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷6.png"><img src="clothes/옷6.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷7.png"><img src="clothes/옷7.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷8.png"><img src="clothes/옷8.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷9.png"><img src="clothes/옷9.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷10.png"><img src="clothes/옷10.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷11.png"><img src="clothes/옷11.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷12.png"><img src="clothes/옷12.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷13.png"><img src="clothes/옷13.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷14.png"><img src="clothes/옷14.png" alt="장식"></button>
+            <button class="item-button" data-image="clothes/옷15.png"><img src="clothes/옷15.png" alt="장식"></button>
+            
+            <!-- 나머지 hats/모자장식 추가 -->
+        </div>
+
 
         <!-- 손 아이템 탭 -->
         <div class="tab-content" id="handItemTab">
-            <button class="item-button" data-image="item1.png"><img src="item1.png" alt="item1"></button>
-            <button class="item-button" data-image="item2.png"><img src="item2.png" alt="item2"></button>
+ 
+            <div style="text-align: center;">
+                <a style="font-weight: bold; font-size: 22px; color: #000000;">나만핑이 손에 쥐고 있을 아이템을 선책해 주세요!</a>
+
+            </div>
+            <button class="item-button" data-image="items/아이템1.png"><img src="items/아이템1.png" alt="item1"></button>
+            <button class="item-button" data-image="items/아이템2.png"><img src="items/아이템2.png" alt="item2"></button>
+            <button class="item-button" data-image="items/아이템3.png"><img src="items/아이템3.png" alt="item3"></button>
+            <button class="item-button" data-image="items/아이템4.png"><img src="items/아이템4.png" alt="item4"></button>
+            <button class="item-button" data-image="items/아이템5.png"><img src="items/아이템5.png" alt="item5"></button>
+            <button class="item-button" data-image="items/아이템6.png"><img src="items/아이템6.png" alt="item6"></button>
+            <button class="item-button" data-image="items/아이템7.png"><img src="items/아이템7.png" alt="item7"></button>
+            <button class="item-button" data-image="items/아이템8.png"><img src="items/아이템8.png" alt="item8"></button>
+            <button class="item-button" data-image="items/아이템9.png"><img src="items/아이템9.png" alt="item9"></button>
+            <button class="item-button" data-image="items/아이템10.png"><img src="items/아이템10.png" alt="item10"></button>
+            <button class="item-button" data-image="items/아이템11.png"><img src="items/아이템11.png" alt="item11"></button>
+            <button class="item-button" data-image="items/아이템12.png"><img src="items/아이템12.png" alt="item12"></button>
+            <button class="item-button" data-image="items/아이템13.png"><img src="items/아이템13.png" alt="item13"></button>
+            <button class="item-button" data-image="items/아이템14.png"><img src="items/아이템14.png" alt="item14"></button>
+            <button class="item-button" data-image="items/아이템15.png"><img src="items/아이템15.png" alt="item15"></button>
+            
+
             <!-- 나머지 손 아이템 추가 -->
         </div>
+
+         <!-- 사용자 지정 이미지 업로드 및 제어 탭 -->
+<div class="tab-content" id="customImageTab">
+    <div style="text-align: center;">
+        <a style="font-weight: bold; font-size: 22px; color: #000000;">사진을 추가해 보세요!</a>
+        <p>이미지를 업로드해 보세요.</p>
+        <p>캔버스에서 드래그하여 이동하고 크기를 조절하세요</p>
+    </div>
+    <br>
+
+    <input type="file" id="uploadImage" accept="image/*">
+    <br><br><br>
+ </div>
+
+
+
+
     </div>
 
-    <button id="saveAvatar">아바타 저장</button>
+    <button id="saveAvatar">나만핑 저장</button>
+    <button id="shareAvatar">공유하기</button>
+
+
+
+
+
+<br><br>
+    <div style="text-align: center;">
+        <a style="font-weight: bold; font-size: 22px; color: #000000;">Instagram : </a>
+
+    </div>
+
+
+
+
 
     <script>
         const canvas = document.getElementById('avatarCanvas');
         const ctx = canvas.getContext('2d');
-
+        
         const bodyColorButtons = document.querySelectorAll('.color-button');
+        const bodyButtons = document.querySelectorAll('#bodyTab .item-button');
         const hairButtons = document.querySelectorAll('#hairTab .item-button');
         const headAccessoryButtons = document.querySelectorAll('#headAccessoryTab .item-button');
         const handItemButtons = document.querySelectorAll('#handItemTab .item-button');
@@ -135,132 +333,310 @@
         const customColorInput = document.getElementById('customColor');
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
-
-        const bodyImageSrc = 'body.png';  // 미리 제공된 투명한 몸통 이미지 경로
-        let selectedBodyColor = '#FFFFFF';  // 기본 흰색
+        
+        const defaultBodyImageSrc = 'body.png'; // 기본 몸통 이미지
+        let selectedBodyImage = defaultBodyImageSrc; 
+        let bodyColor = '#FFFFFF';
         let selectedHairImage = null;
         let selectedHeadAccessoryImage = null;
         let selectedHandItemImage = null;
+        
+        let uploadedImage = null;
+        let imageX = 50, imageY = 50;  // 이미지 초기 위치
+        let imageWidth = 100, imageHeight = 100;  // 이미지 초기 크기
+        let isDragging = false;
+        let resizing = false;
+        let dragOffsetX = 0, dragOffsetY = 0;
+        
+        let selectedItems = []; // 사용자가 추가한 아이템들을 저장할 배열
 
-        function loadImage(src) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.crossOrigin = "Anonymous";
-                img.src = src;
-                img.onload = () => resolve(img);
-            });
+        
+
+        
+        // 이미지 업로드 처리
+document.getElementById('uploadImage').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                uploadedImage = img;
+                drawAvatar();
+            };
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// 캔버스에서 이미지 및 아이템 드래그 및 크기 조절 이벤트
+canvas.addEventListener('mousedown', (e) => {
+    const mouseX = e.offsetX;
+    const mouseY = e.offsetY;
+
+    // 사용자 지정 이미지가 클릭되었는지 확인
+    if (uploadedImage && mouseX > imageX && mouseX < imageX + imageWidth && mouseY > imageY && mouseY < imageY + imageHeight) {
+        isDraggingImage = true;
+        dragOffsetX = mouseX - imageX;
+        dragOffsetY = mouseY - imageY;
+    }
+
+    // 사용자 지정 이미지 크기 조정 핸들 클릭 확인 (오른쪽 아래 10x10 영역)
+    if (uploadedImage && mouseX > imageX + imageWidth - 10 && mouseY > imageY + imageHeight - 10) {
+        resizingImage = true;
+    }
+
+    // 추가된 아이템 중 클릭된 아이템 찾기
+    selectedItems.forEach(item => {
+        if (mouseX > item.x && mouseX < item.x + item.width && mouseY > item.y && mouseY < item.y + item.height) {
+            item.isDragging = true;
+            item.dragOffsetX = mouseX - item.x;
+            item.dragOffsetY = mouseY - item.y;
+        }
+        if (mouseX > item.x + item.width - 10 && mouseY > item.y + item.height - 10) {
+            item.resizing = true;
+        }
+    });
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (isDraggingImage) {
+        imageX = e.offsetX - dragOffsetX;
+        imageY = e.offsetY - dragOffsetY;
+        drawAvatar();
+    }
+
+    if (resizingImage) {
+        imageWidth = e.offsetX - imageX;
+        imageHeight = e.offsetY - imageY;
+        drawAvatar();
+    }
+
+    selectedItems.forEach(item => {
+        if (item.isDragging) {
+            item.x = e.offsetX - item.dragOffsetX;
+            item.y = e.offsetY - item.dragOffsetY;
+            drawAvatar();
         }
 
-        async function drawAvatar() {
-            // Clear the canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (item.resizing) {
+            item.width = e.offsetX - item.x;
+            item.height = e.offsetY - item.y;
+            drawAvatar();
+        }
+    });
+});
 
-            // Draw the body background color
-            ctx.fillStyle = selectedBodyColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+canvas.addEventListener('mouseup', () => {
+    isDraggingImage = false;
+    resizingImage = false;
+    selectedItems.forEach(item => {
+        item.isDragging = false;
+        item.resizing = false;
+    });
+});
+        
 
-            // Load and draw the body image (투명한 PNG 이미지)
-            const bodyImage = await loadImage(bodyImageSrc);
-            ctx.drawImage(bodyImage, 0, 0, 400, 400);
+// 업로드된 이미지 및 아이템 그리기 함수
+async function drawAvatar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);  // 캔버스 초기화
 
+    // 기본 몸통 이미지 그리기
+    const bodyImg = await loadImage(selectedBodyImage);
+    ctx.fillStyle = bodyColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height); // 배경 색상
+    ctx.drawImage(bodyImg, 0, 0, canvas.width, canvas.height);
 
-// Load and draw the selected hair type if any
-if (selectedHairImage) {
-    const hairImage = await loadImage(selectedHairImage);
+    if (selectedHairImage) {
+        const hairImg = await loadImage(selectedHairImage);
+        ctx.drawImage(hairImg, 0, 0, canvas.width, canvas.height);
+    }
 
-    // 캔버스 크기 설정 (400x400)
-    const canvasSize = 400;  // 캔버스 크기 400x400으로 설정
-    
-    // 머리 이미지를 캔버스 전체 크기로 설정
-    const hairSize = canvasSize; // 이미지 크기를 400x400으로 설정 (캔버스 전체를 덮음)
-    
-    // 이미지를 캔버스 전체에 맞게 배치
-    const xPosition = 0;  // x 좌표를 0으로 설정 (왼쪽 상단)
-    const yPosition = 0;  // y 좌표를 0으로 설정 (위쪽 상단)
+    if (selectedHeadAccessoryImage) {
+        const headAccessoryImg = await loadImage(selectedHeadAccessoryImage);
+        ctx.drawImage(headAccessoryImg, 0, 0, canvas.width, canvas.height);
+    }
 
-    // 머리 이미지를 캔버스 전체에 그리기
-    ctx.drawImage(hairImage, xPosition, yPosition, hairSize, hairSize);
+    // 손 아이템 그리기
+    selectedItems.forEach(async item => {
+        const img = await loadImage(item.src);
+        ctx.drawImage(img, item.x, item.y, item.width, item.height);
+
+        // 드래그 및 크기 조정 핸들
+        ctx.setLineDash([6]);
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(item.x, item.y, item.width, item.height);
+
+        const handleSize = 10;
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(item.x + item.width - handleSize / 2, item.y + item.height - handleSize / 2, handleSize, handleSize);
+    });
+
+    // 업로드된 이미지 그리기
+    if (uploadedImage) {
+        ctx.drawImage(uploadedImage, imageX, imageY, imageWidth, imageHeight);
+
+        // 가장자리에 점선 그리기
+        ctx.setLineDash([6]);  // 점선 설정
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(imageX, imageY, imageWidth, imageHeight);
+
+        // 네 모서리에 작은 사각형(핸들) 그리기
+        const handleSize = 10;
+        ctx.fillStyle = 'blue';
+
+        // 왼쪽 위
+        ctx.fillRect(imageX - handleSize / 2, imageY - handleSize / 2, handleSize, handleSize);
+
+        // 오른쪽 위
+        ctx.fillRect(imageX + imageWidth - handleSize / 2, imageY - handleSize / 2, handleSize, handleSize);
+
+        // 왼쪽 아래
+        ctx.fillRect(imageX - handleSize / 2, imageY + imageHeight - handleSize / 2, handleSize, handleSize);
+
+        // 오른쪽 아래 (크기 조절 핸들)
+        ctx.fillRect(imageX + imageWidth - handleSize / 2, imageY + imageHeight - handleSize / 2, handleSize, handleSize);
+    }
 }
 
+// 아이템 추가 함수
+function addItemToCanvas(itemSrc) {
+    const newItem = {
+        src: itemSrc,
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 100,
+        isDragging: false,
+        resizing: false,
+        dragOffsetX: 0,
+        dragOffsetY: 0,
+    };
+    selectedItems.push(newItem);
+    drawAvatar();
+}
 
+// 이미지를 로드하는 함수
+function loadImage(src) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = src;
+    });
+}
 
-            // Load and draw the selected head accessory if any
-            if (selectedHeadAccessoryImage) {
-                const headAccessoryImage = await loadImage(selectedHeadAccessoryImage);
-                ctx.drawImage(headAccessoryImage, 50, 10, 100, 100); // Adjust position based on the accessory
-            }
+// 본체 색상 변경 이벤트
+bodyColorButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        bodyColor = button.getAttribute('data-color');
+        drawAvatar();
+    });
+});
 
-            // Load and draw the selected hand item if any
-            if (selectedHandItemImage) {
-                const handItemImage = await loadImage(selectedHandItemImage);
-                ctx.drawImage(handItemImage, 50, 300, 100, 100); // Adjust position based on the item
-            }
+// 커스텀 색상 입력 이벤트
+customColorInput.addEventListener('input', () => {
+    bodyColor = customColorInput.value;
+    drawAvatar();
+});
+
+// 몸체 버튼 클릭 이벤트
+bodyButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        selectedBodyImage = button.getAttribute('data-image');
+        drawAvatar();
+    });
+});
+
+// 머리 버튼 클릭 이벤트
+hairButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        selectedHairImage = button.getAttribute('data-image');
+        drawAvatar();
+    });
+});
+
+// 머리 액세서리 버튼 클릭 이벤트
+headAccessoryButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        selectedHeadAccessoryImage = button.getAttribute('data-image');
+        drawAvatar();
+    });
+});
+
+// 손 아이템 버튼 클릭 이벤트
+handItemButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const handItemSrc = button.getAttribute('data-image');
+        addItemToCanvas(handItemSrc);
+    });
+});
+
+// 아바타 저장
+saveButton.addEventListener('click', async () => {
+    // 저장할 때 점선이 표시되지 않도록 하기 위해 기존 점선 그리기 제거
+    const originalDrawAvatar = drawAvatar; // 원래의 drawAvatar 함수 백업
+    drawAvatar = async () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스 초기화
+
+        // 기본 몸통 이미지 그리기
+        const bodyImg = await loadImage(selectedBodyImage);
+        ctx.fillStyle = bodyColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height); // 배경 색상
+        ctx.drawImage(bodyImg, 0, 0, canvas.width, canvas.height);
+
+        if (selectedHairImage) {
+            const hairImg = await loadImage(selectedHairImage);
+            ctx.drawImage(hairImg, 0, 0, canvas.width, canvas.height);
         }
 
-        // Event listeners for body color buttons
-        bodyColorButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                selectedBodyColor = e.target.dataset.color;
-                drawAvatar();
-            });
+        if (selectedHeadAccessoryImage) {
+            const headAccessoryImg = await loadImage(selectedHeadAccessoryImage);
+            ctx.drawImage(headAccessoryImg, 0, 0, canvas.width, canvas.height);
+        }
+
+        // 손 아이템 그리기
+        for (const item of selectedItems) {
+            const img = await loadImage(item.src);
+            ctx.drawImage(img, item.x, item.y, item.width, item.height);
+        }
+
+        // 업로드된 이미지 그리기
+        if (uploadedImage) {
+            ctx.drawImage(uploadedImage, imageX, imageY, imageWidth, imageHeight);
+        }
+    };
+
+    await drawAvatar(); // 최종 아바타 그리기
+    const link = document.createElement('a');
+    link.download = 'custom_avatar.png';
+    link.href = canvas.toDataURL();
+    link.click();
+
+    drawAvatar = originalDrawAvatar; // 원래의 drawAvatar 함수로 복원
+});
+
+// 탭 기능
+tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const targetTab = button.getAttribute('data-tab');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        tabContents.forEach(tab => {
+            if (tab.id === targetTab) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
         });
+    });
+});
 
-        // Custom color input event listener
-        customColorInput.addEventListener('input', () => {
-            selectedBodyColor = customColorInput.value;
-            drawAvatar();
-        });
-
-        // Event listeners for hair buttons
-        hairButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                selectedHairImage = e.target.closest('button').dataset.image;
-                drawAvatar();
-            });
-        });
-
-        // Event listeners for head accessory buttons
-        headAccessoryButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                selectedHeadAccessoryImage = e.target.closest('button').dataset.image;
-                drawAvatar();
-            });
-        });
-
-        // Event listeners for hand item buttons
-        handItemButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                selectedHandItemImage = e.target.closest('button').dataset.image;
-                drawAvatar();
-            });
-        });
-
-        // Save button event listener
-        saveButton.addEventListener('click', () => {
-            const link = document.createElement('a');
-            link.download = 'custom_avatar.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-
-        // Tab navigation
-        tabButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-
-                button.classList.add('active');
-                document.getElementById(button.dataset.tab).classList.add('active');
-            });
-        });
-
-        // Initialize the first tab as active
-        tabButtons[0].classList.add('active');
-        tabContents[0].classList.add('active');
-
-        // Initial drawing
-        drawAvatar();
+// 초기 아바타 그리기
+drawAvatar();
     </script>
-
-</body>
+    
+    
+    
+</몸통>
 </html>

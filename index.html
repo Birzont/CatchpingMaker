@@ -17,7 +17,7 @@
         }
         
         canvas {
-            border: 2px solid #ccc;
+            border: 2px solid #ccc;=
             border-radius: 10px;
             background-color: #fff;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -334,7 +334,7 @@
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
         
-        const defaultBodyImageSrc = 'body.png'; // 기본 몸통 이미지
+        const defaultBodyImageSrc = 'momtong/몸통1.png'; // 기본 몸통 이미지
         let selectedBodyImage = defaultBodyImageSrc; 
         let bodyColor = '#FFFFFF';
         let selectedHairImage = null;
@@ -607,7 +607,7 @@ saveButton.addEventListener('click', async () => {
         }
     };
 
-    
+
     await drawAvatar(); // 최종 아바타 그리기
     const link = document.createElement('a');
     link.download = 'custom_avatar.png';
